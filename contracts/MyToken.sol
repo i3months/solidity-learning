@@ -17,7 +17,7 @@ contract MyToken {
         decimals = _decimals;
 
         // msg.sender는 배포하는 사람을 의미
-        _mint(1000000000000000000, msg.sender);
+        _mint(1 * 10 ** uint256(decimals), msg.sender);
     }
 
     // 토큰 발행은 mint로

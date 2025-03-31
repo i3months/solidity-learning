@@ -26,11 +26,15 @@ describe("mytoken deploy", () => {
     it("should return decimals", async () => {
         expect(await myTokenContract.decimals()).equal(18);
     })
-    it("should return 0 totalSupply", async () => {
-        expect(await myTokenContract.totalSupply()).equals(0);
+    it("should return 1MT totalSupply", async () => {
+        expect(await myTokenContract.totalSupply()).equals(1n * 10n ** 18n);
     })
-    it("should return 0 balance for signer 0", async () => {
-        expect(await myTokenContract.balanceOf(signers[0])).equals(0);
+    // it("should return 0 balance for signer 0", async () => {
+    //     expect(await myTokenContract.balanceOf(signers[0])).equals(0);
+    // })
+    it("should return 1MT balance for signer 0", async () => {
+        const signer0 = signers[0];
+        expect(await myTokenContract.balanceOf(signer0)).equals(1n * 10n ** 18n);
     })
 
 })
