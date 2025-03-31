@@ -26,6 +26,12 @@ contract MyToken {
         balanceOf[owner] += amount;
     }
 
+    function transfer(uint256 amount, address to) external {
+        require(balanceOf[msg.sender] >= amount, "insufficient balance");
+        balanceOf[msg.sender] -= amount;
+        balanceOf[to] += amount;
+    }
+
     // external은 외부 호출만 가능함을 의미, view는 해당 함수가 ReadOnly임을 의미. returns라서 여러 개를 반환할 수 있음
     // // public 타입에 대해서는 기본적으로 만들어 줌
     // function totalSupply() external view returns (uint256) {
