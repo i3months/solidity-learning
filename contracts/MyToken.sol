@@ -7,10 +7,28 @@ contract MyToken {
     string public symbol;
     uint8 public decimals; // uint8 = unsigned 8 bit int
 
+    uint256 public totalSupply; // 토큰이 총 몇 개 발행되었는지?
+    mapping(address => uint256) public balanceOf; // 누가 몇 개의 토큰을 가지는지? address는 길이가 동일함
+
     // string은 길이 제한이 없으니 memory에다가 복사하라고 명시해 줘야 함
     constructor(string memory _name, string memory _symbol, uint8 _decimals) {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
     }
+
+    // external은 외부 호출만 가능함을 의미, view는 해당 함수가 ReadOnly임을 의미. returns라서 여러 개를 반환할 수 있음
+    // // public 타입에 대해서는 기본적으로 만들어 줌
+    // function totalSupply() external view returns (uint256) {
+    //     return totalSupply;
+    // }
+
+    // function balanceOf(address owner) external view returns (uint256) {
+    //     return balanceOf[owner];
+    // }
+
+    // // string은 address처럼 길이가 정해져 있지 않으니 memory를 사용해야 함
+    // function name() external view returns (string memory) {
+    //     return name;
+    // }
 }
