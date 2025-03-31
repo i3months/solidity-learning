@@ -15,6 +15,15 @@ contract MyToken {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
+
+        // msg.sender는 배포하는 사람을 의미
+        _mint(1000000000000000000, msg.sender);
+    }
+
+    // 토큰 발행은 mint로
+    function _mint(uint256 amount, address owner) internal {
+        totalSupply += amount;
+        balanceOf[owner] += amount;
     }
 
     // external은 외부 호출만 가능함을 의미, view는 해당 함수가 ReadOnly임을 의미. returns라서 여러 개를 반환할 수 있음
