@@ -104,4 +104,26 @@ describe("My Token", () => {
         })
     })
 
+    it("should signer1 transfer 3 from signer0", async () => {
+        const signer0 = signers[0];
+        const signer1 = signers[1];
+
+        const amount = hre.ethers.parseUnits("3", decimals);
+
+        // approve signer0 -> signer1
+        await expect(myTokenContract.connect(signer0).approve(signer1.address, amount)).to.emit(myTokenContract, "Approval")
+            .withArgs(signer1.address, amount);
+
+        // signer0 -> signer1 tranferFrom 사용 signer1이 호출함
+        await expect(myTokenContract.connect(signer1).transferFrom(signer0.address, signer1.address, amount)).to.emit(myTokenContract, "Transfer")
+            .withArgs(signer0.address, signer1.address, amount);
+
+        const balance0 = await myTokenContract.balanceOf(signer0.address);
+        const balance1 = await myTokenContract.balanceOf(signer1.address);
+
+        expect(balance0).to.equal((mintingAmount * 10n ** decimals) - amount);
+        expect(balance1).to.equal(amount);
+    });
+
+
 })
