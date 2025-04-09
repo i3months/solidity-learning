@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 // contract는 class와 유사
 contract MyToken {
+    event Transfer(address indexed from, address indexed to, uint256 value);
     string public name;
     string public symbol;
     uint8 public decimals; // uint8 = unsigned 8 bit int
@@ -29,12 +30,16 @@ contract MyToken {
     function _mint(uint256 amount, address owner) internal {
         totalSupply += amount;
         balanceOf[owner] += amount;
+
+        emit Transfer(address(0), owner, amount);
     }
 
     function transfer(uint256 amount, address to) external {
         require(balanceOf[msg.sender] >= amount, "insufficient balance");
         balanceOf[msg.sender] -= amount;
         balanceOf[to] += amount;
+
+        emit Transfer(msg.sender, to, amount);
     }
 
     // external은 외부 호출만 가능함을 의미, view는 해당 함수가 ReadOnly임을 의미. returns라서 여러 개를 반환할 수 있음
