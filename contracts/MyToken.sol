@@ -11,13 +11,18 @@ contract MyToken {
     mapping(address => uint256) public balanceOf; // 누가 몇 개의 토큰을 가지는지? address는 길이가 동일함
 
     // string은 길이 제한이 없으니 memory에다가 복사하라고 명시해 줘야 함
-    constructor(string memory _name, string memory _symbol, uint8 _decimals) {
+    constructor(
+        string memory _name,
+        string memory _symbol,
+        uint8 _decimals,
+        uint256 _amount
+    ) {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
 
         // msg.sender는 배포하는 사람을 의미
-        _mint(1 * 10 ** uint256(decimals), msg.sender);
+        _mint(_amount * 10 ** uint256(decimals), msg.sender);
     }
 
     // 토큰 발행은 mint로
