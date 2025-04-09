@@ -4,12 +4,15 @@ pragma solidity ^0.8.28;
 // contract는 class와 유사
 contract MyToken {
     event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed spender, uint256 amount);
+
     string public name;
     string public symbol;
     uint8 public decimals; // uint8 = unsigned 8 bit int
 
     uint256 public totalSupply; // 토큰이 총 몇 개 발행되었는지?
     mapping(address => uint256) public balanceOf; // 누가 몇 개의 토큰을 가지는지? address는 길이가 동일함
+    mapping(address => mapping(address => uint256)) allowance;
 
     // string은 길이 제한이 없으니 memory에다가 복사하라고 명시해 줘야 함
     constructor(
@@ -24,6 +27,28 @@ contract MyToken {
 
         // msg.sender는 배포하는 사람을 의미
         _mint(_amount * 10 ** uint256(decimals), msg.sender);
+    }
+
+    // approve는 토큰 오너가, transferFrom은 다른 사람도 호출할 수 있음
+    function approve(address spender, uint256 amount) external {
+        allowance[msg.sender][spender] = amount;
+        emit Approval(spender, amount);
+    }
+
+    /**
+     * 허락 받은 사람이 호출함
+     */
+    function transferFrom(address from, address to, uint256 amount) external {
+        address spender = msg.sender;
+
+        require(allowance[from][spender] >= amount, "insufficient allowance");
+
+        allowance[from][spender] -= amount;
+
+        balanceOf[from] -= amount;
+        balanceOf[to] += amount;
+
+        emit Transfer(from, to, amount);
     }
 
     // 토큰 발행은 mint로
