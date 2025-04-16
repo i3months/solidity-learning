@@ -12,7 +12,7 @@ contract MyToken {
 
     uint256 public totalSupply; // 토큰이 총 몇 개 발행되었는지?
     mapping(address => uint256) public balanceOf; // 누가 몇 개의 토큰을 가지는지? address는 길이가 동일함
-    mapping(address => mapping(address => uint256)) allowance;
+    mapping(address => mapping(address => uint256)) public allowance;
 
     // string은 길이 제한이 없으니 memory에다가 복사하라고 명시해 줘야 함
     constructor(
