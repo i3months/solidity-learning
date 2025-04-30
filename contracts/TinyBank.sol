@@ -37,6 +37,9 @@ contract TinyBank {
     // 블럭마다 하면 가스비가 많이 든다. 
 
     // stake나 withdraw 호출 할 때 함께 처리한다면?     
+
+    // 모든 블럭을 처리하는건 너무 비효율적이니.. 해당하는 요소만 처리하자.
+
     // genesis staking -> totalStaked, staked[to] 가 0이 된다 
     function updateReward(address to) internal {
         if (staked[to] > 0) {
