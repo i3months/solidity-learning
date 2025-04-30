@@ -6,6 +6,8 @@ contract MyToken {
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed spender, uint256 amount);
 
+    address public owner;
+    address public manager;
     string public name;
     string public symbol;
     uint8 public decimals; // uint8 = unsigned 8 bit int
@@ -15,18 +17,31 @@ contract MyToken {
     mapping(address => mapping(address => uint256)) public allowance;
 
     // string은 길이 제한이 없으니 memory에다가 복사하라고 명시해 줘야 함
-    constructor(
+    constructor(    
         string memory _name,
         string memory _symbol,
         uint8 _decimals,
         uint256 _amount
     ) {
+        owner = msg.sender;
+        manager = msg.sender;
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
 
         // msg.sender는 배포하는 사람을 의미
         _mint(_amount * 10 ** uint256(decimals), msg.sender);
+    }
+
+    // mint 가 external 이라 지켜줘야함 
+    modifier onlyOwner {
+        require(msg.sender == owner, "Not Authorized");
+        _;
+    }
+    
+    modifier onlyManager {
+        require(msg.sender == manager, "Not Manager");
+        _;
     }
 
     // approve는 토큰 오너가, transferFrom은 다른 사람도 호출할 수 있음
@@ -52,12 +67,16 @@ contract MyToken {
     }
 
     // 누구나 호출할 수 있어서 위험 
-    function mint(uint256 amount, address owner) external {
+    function mint(uint256 amount, address to) external onlyManager {
         _mint(amount, owner);
     }
 
+    function setManager(address _manager) external onlyOwner {
+        manager = _manager;
+    }
+
     // 토큰 발행은 mint로
-    function _mint(uint256 amount, address owner) internal {
+    function _mint(uint256 amount, address to) internal {
         totalSupply += amount;
         balanceOf[owner] += amount;
 

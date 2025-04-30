@@ -41,10 +41,17 @@ describe("My Token", () => {
     //     expect(await myTokenContract.balanceOf(signers[0])).equals(0);
     // })
 
+    // TDD - 테
     describe("Mint", () => {
         it("should return 1MT balance for signer 0", async () => {
             const signer0 = signers[0];
             expect(await myTokenContract.balanceOf(signer0)).equals(MINTING_AMOUNT * 10n ** DECIMALS);
+        })
+
+        it("should return or revert when minting infinitly", async () => {
+            const hacker = signers[2];
+            const MINTING_AGAIN_AMOUNT = hre.ethers.parseUnits("100", DECIMALS);
+            await expect(myTokenContract.connect(hacker).mint(MINTING_AGAIN_AMOUNT, hacker.address)).to.be.revertedWith("Not Manager"); 
         })
     })
 

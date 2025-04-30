@@ -21,7 +21,7 @@ describe("TinyBank", () => {
         tinyBankC = await hre.ethers.deployContract("TinyBank", [
             await myTokenC.getAddress()
         ]);       
-        
+        await myTokenC.setManager(tinyBankC.getAddress());
     });
 
     describe("Initialized state check", () => {
@@ -51,7 +51,7 @@ describe("TinyBank", () => {
         });
     });
 
-    
+
     describe("Withdraw", () => {
         it("should return 0 staked after withdrawing total token", async () => {
             const signer0 = signers[0];
