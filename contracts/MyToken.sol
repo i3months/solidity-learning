@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
+import "./ManagedAccess.sol";
+
 // contract는 class와 유사
-contract MyToken {
+contract MyToken is ManagedAccess {
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed spender, uint256 amount);
 
-    address public owner;
-    address public manager;
     string public name;
     string public symbol;
     uint8 public decimals; // uint8 = unsigned 8 bit int
@@ -22,9 +22,7 @@ contract MyToken {
         string memory _symbol,
         uint8 _decimals,
         uint256 _amount
-    ) {
-        owner = msg.sender;
-        manager = msg.sender;
+    ) ManagedAccess(msg.sender, msg.sender) {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
