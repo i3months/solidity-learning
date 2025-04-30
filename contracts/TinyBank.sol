@@ -6,6 +6,8 @@
 // vault (금고)
 pragma solidity ^0.8.28;
 
+import "./ManagedAccess.sol";
+
 interface IMyToken {
     function transfer(uint256 amount, address to) external;
 
@@ -15,21 +17,28 @@ interface IMyToken {
 }
 
 // 저장할 token을 먼저 배포, 이후 TinyBank의 생성자로 줘야 함 
-contract TinyBank {
+contract TinyBank is ManagedAccess {
     event Staked(address from, uint256 amount);
     event WithDraw(uint256 amount, address to);
 
     IMyToken public stakingToken;
 
     mapping(address => uint256) public lastClaimedBlock;
-    uint256 rewardPerBlock = 1 * 10 ** 18;
+
+    uint256 defaultRewardPerBlock = 1 * 10 ** 18;
+    uint256 rewardPerBlock;
 
     // mapping은 단방향. 대신 빠름 
     mapping(address => uint256) public staked;
     uint256 public totalStaked;
 
-    constructor(IMyToken _stakingToken) {
+    constructor(IMyToken _stakingToken) ManagedAccess(msg.sender, msg.sender) {
         stakingToken = _stakingToken;
+        rewardPerBlock = defaultRewardPerBlock;
+    }
+
+    function setRewardPerBlock(uint256 _amount) external onlyManager {
+        rewardPerBlock = _amount;
     }
 
     

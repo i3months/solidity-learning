@@ -81,7 +81,13 @@ describe("TinyBank", () => {
             expect(await myTokenC.balanceOf(signer0.address)).equals(
                 hre.ethers.parseUnits((BLOCKS + MINTING_AMOUNT + 1n).toString()) 
             )
-        })
-    })
+        });
 
+        // 이벤트나 revert 트리거 할 때는 await를 앞에 붙여주기 
+        it("Should rever when changing rewardPerBlock by hacker", async () => {
+            const hacker = signers[3];
+            const rewardToChange = hre.ethers.parseUnits("10000", DECIMALS);
+            await expect(tinyBankC.connect(hacker).setRewardPerBlock(rewardToChange)).to.be.revertedWith("Not Manager");
+        })
+    });
 });
