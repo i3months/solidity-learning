@@ -32,6 +32,8 @@ contract TinyBank {
         stakingToken = _stakingToken;
     }
 
+    
+
     // 리워드 분배 함수를 누가, 언제 호출해야 할까? 
     // state 변경은 트랜잭션으로 처리하는데. 
     // 블럭마다 하면 가스비가 많이 든다. 
@@ -41,27 +43,29 @@ contract TinyBank {
     // 모든 블럭을 처리하는건 너무 비효율적이니.. 해당하는 요소만 처리하자.
 
     // genesis staking -> totalStaked, staked[to] 가 0이 된다 
-    function updateReward(address to) internal {
+
+    // modifier의 scope는 internal
+    // _는 코드를 insert 함을 의미함. 자바의 AOP 와 동일 (컴파일 타임에 동작)
+    modifier updateReward(address to) {
         if (staked[to] > 0) {
             uint256 blocks = block.number - lastClaimedBlock[to];
             uint256 reward = blocks * rewardPerBlock * staked[to] / totalStaked;
             stakingToken.mint(reward, to);
         }
         lastClaimedBlock[to] = block.number;
+        _;
     }
 
-    function stake(uint256 _amount) external {
-        require(_amount >= 0, "cannot stake 0 amount");
-        updateReward(msg.sender);
+    function stake(uint256 _amount) external updateReward(msg.sender) {
+        require(_amount >= 0, "cannot stake 0 amount");        
         stakingToken.transferFrom(msg.sender, address(this), _amount);
         staked[msg.sender] += _amount;
         totalStaked += _amount;
         emit Staked(msg.sender, _amount);
     }
 
-    function withdraw(uint256 _amount) external {
-        require(staked[msg.sender] >= _amount, "insufficient stake token");
-        updateReward(msg.sender);
+    function withdraw(uint256 _amount) external updateReward((msg.sender)) {
+        require(staked[msg.sender] >= _amount, "insufficient stake token");        
         stakingToken.transfer(_amount, msg.sender);
         staked[msg.sender] -= _amount;
         totalStaked -= _amount;
