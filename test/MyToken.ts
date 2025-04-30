@@ -4,8 +4,8 @@ import { MyToken } from "../typechain-types";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { assertArgumentCount } from "ethers";
 
-const MINTING_AMOUNT = 100n;
-const DECIMALS = 18n;
+import { DECIMALS, MINTING_AMOUNT } from "./constants";
+
 
 // 컴파일 할 때 필요한 클래스 만들어줌 
 describe("My Token", () => {
@@ -30,7 +30,7 @@ describe("My Token", () => {
             expect(await myTokenContract.symbol()).equal("MT");
         })
         it("should return DECIMALS", async () => {
-            expect(await myTokenContract.DECIMALS()).equal(18);
+            expect(await myTokenContract.decimals()).equal(18);
         })
         it("should return 100 totalSupply", async () => {
             expect(await myTokenContract.totalSupply()).equals(MINTING_AMOUNT * 10n ** DECIMALS);
