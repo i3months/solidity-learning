@@ -51,6 +51,11 @@ contract MyToken {
         emit Transfer(from, to, amount);
     }
 
+    // 누구나 호출할 수 있어서 위험 
+    function mint(uint256 amount, address owner) external {
+        _mint(amount, owner);
+    }
+
     // 토큰 발행은 mint로
     function _mint(uint256 amount, address owner) internal {
         totalSupply += amount;
