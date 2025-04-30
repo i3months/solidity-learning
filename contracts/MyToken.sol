@@ -31,17 +31,6 @@ contract MyToken is ManagedAccess {
         _mint(_amount * 10 ** uint256(decimals), msg.sender);
     }
 
-    // mint 가 external 이라 지켜줘야함 
-    modifier onlyOwner {
-        require(msg.sender == owner, "Not Authorized");
-        _;
-    }
-    
-    modifier onlyManager {
-        require(msg.sender == manager, "Not Manager");
-        _;
-    }
-
     // approve는 토큰 오너가, transferFrom은 다른 사람도 호출할 수 있음
     function approve(address spender, uint256 amount) external {
         allowance[msg.sender][spender] = amount;
