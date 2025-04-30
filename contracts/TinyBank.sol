@@ -22,7 +22,6 @@ contract TinyBank {
     IMyToken public stakingToken;
 
     mapping(address => uint256) public lastClaimedBlock;
-    address[] public stakedUsers;
     uint256 rewardPerBlock = 1 * 10 ** 18;
 
     // mapping은 단방향. 대신 빠름 
@@ -38,44 +37,28 @@ contract TinyBank {
     // 블럭마다 하면 가스비가 많이 든다. 
 
     // stake나 withdraw 호출 할 때 함께 처리한다면?     
-    function distributedReward() internal {
-        for (uint i = 0; i < stakedUsers.length; i++) {
-            uint256 blocks = block.number - lastClaimedBlock[stakedUsers[i]];
-            uint256 reward = blocks * rewardPerBlock * staked[stakedUsers[i]] / totalStaked;
-            IMyToken.mint(reward, stakedUsers[i]);
-            lastClaimedBlock[stakedUsers[i]] = block.number;
-        }
+    function distributedReward(address to) internal {
+        uint256 blocks = block.number - lastClaimedBlock[to];
+        uint256 reward = blocks * rewardPerBlock * staked[to] / totalStaked;
+        stakingToken.mint(reward, to);
+        lastClaimedBlock[to] = block.number;
     }
 
     function stake(uint256 _amount) external {
         require(_amount >= 0, "cannot stake 0 amount");
-        distributedReward();
+        distributedReward(msg.sender);
         stakingToken.transferFrom(msg.sender, address(this), _amount);
         staked[msg.sender] += _amount;
         totalStaked += _amount;
-        stakedUsers.push(msg.msg.sender);
         emit Staked(msg.sender, _amount);
     }
 
     function withdraw(uint256 _amount) external {
         require(staked[msg.sender] >= _amount, "insufficient stake token");
-        distributedReward();
+        distributedReward(msg.sender);
         stakingToken.transfer(_amount, msg.sender);
         staked[msg.sender] -= _amount;
         totalStaked -= _amount;
-
-        // 비효율적!
-        if (staked[msg.sender] == 0) {
-            uint256 index;
-            for (uint i = 0; i < stakedUsers.length; i++) {
-                if (stakedUser[i] == msg.sender) {
-                    index = i;
-                    break;
-                }   
-            }
-            stakedUsers[index] = stakedUsers[stakedUsers.length - 1];
-            stakedUsers.pop();
-        }
 
         emit WithDraw(_amount, msg.sender);
     }
