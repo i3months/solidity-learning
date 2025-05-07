@@ -7,6 +7,7 @@
 pragma solidity ^0.8.28;
 
 import "./ManagedAccess.sol";
+import "./MultiManagedAccess.sol";
 
 interface IMyToken {
     function transfer(uint256 amount, address to) external;
@@ -17,7 +18,7 @@ interface IMyToken {
 }
 
 // 저장할 token을 먼저 배포, 이후 TinyBank의 생성자로 줘야 함 
-contract TinyBank is ManagedAccess {
+contract TinyBank is MultiManagedAccess {
     event Staked(address from, uint256 amount);
     event WithDraw(uint256 amount, address to);
 
@@ -26,18 +27,20 @@ contract TinyBank is ManagedAccess {
     mapping(address => uint256) public lastClaimedBlock;
 
     uint256 defaultRewardPerBlock = 1 * 10 ** 18;
-    uint256 rewardPerBlock;
+    uint256 public rewardPerBlock;
 
     // mapping은 단방향. 대신 빠름 
     mapping(address => uint256) public staked;
     uint256 public totalStaked;
 
-    constructor(IMyToken _stakingToken) ManagedAccess(msg.sender, msg.sender) {
+    constructor(IMyToken _stakingToken, address[] memory _managers)
+        MultiManagedAccess(msg.sender, _managers) {
         stakingToken = _stakingToken;
         rewardPerBlock = defaultRewardPerBlock;
     }
 
-    function setRewardPerBlock(uint256 _amount) external onlyManager {
+
+    function setRewardPerBlock(uint256 _amount) external onlyAllConfirmed {
         rewardPerBlock = _amount;
     }
 
@@ -81,8 +84,11 @@ contract TinyBank is ManagedAccess {
 
         emit WithDraw(_amount, msg.sender);
     }
-
     // 블록체인에서의 시간은 블록이 만들어진 시간을 기준으로 계산함 
+
+    // function confirm() external override {
+    //     super.confirm();
+    // }
     
 }
 

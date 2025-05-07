@@ -10,8 +10,9 @@ describe("TinyBank", () => {
     let myTokenC: MyToken;
     let tinyBankC: TinyBank;
 
-    beforeEach(async () => {
+    beforeEach(async () => {        
         signers = await hre.ethers.getSigners();
+        const managers = signers.slice(0, 5).map((s) => s.address);
         myTokenC = await hre.ethers.deployContract("MyToken", [
             "MyToken",
             "MY",
@@ -19,7 +20,8 @@ describe("TinyBank", () => {
             MINTING_AMOUNT,
         ]);
         tinyBankC = await hre.ethers.deployContract("TinyBank", [
-            await myTokenC.getAddress()
+            await myTokenC.getAddress(),
+            managers
         ]);       
         await myTokenC.setManager(tinyBankC.getAddress());
     });
@@ -87,7 +89,7 @@ describe("TinyBank", () => {
         it("Should rever when changing rewardPerBlock by hacker", async () => {
             const hacker = signers[3];
             const rewardToChange = hre.ethers.parseUnits("10000", DECIMALS);
-            await expect(tinyBankC.connect(hacker).setRewardPerBlock(rewardToChange)).to.be.revertedWith("Not Manager");
+            await expect(tinyBankC.connect(hacker).setRewardPerBlock(rewardToChange)).to.be.revertedWith("Not all confirmed yet");
         })
     });
 });

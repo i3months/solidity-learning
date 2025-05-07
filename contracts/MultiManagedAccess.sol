@@ -38,7 +38,7 @@ abstract contract MultiManagedAccess {
     }
 
     modifier onlyAllConfirmed() {
-        require(allConfirmed(), "Not all managers confirmed");
+        require(allConfirmed(), "Not all confirmed yet");
         reset();
         _;
     }
@@ -53,12 +53,6 @@ abstract contract MultiManagedAccess {
             }
         }
 
-        require(found, "You are not manager.");
+        require(found, "You are not a manager");
     }
 }
-
-/**
- * 지금은 contract만 만들었으니.. 접근 제어 test는 직접 해보기 
- * TinyBank의 ManagedAccess를 only all confirm 이런식으로 바꿔서 테스트 해보기 
- * 
- */
