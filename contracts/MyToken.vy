@@ -1,4 +1,4 @@
-# @version ^0.3.0
+# @version ^0.3.9
 # @license MIT
 
 # 파일 자체가 contract 
@@ -11,11 +11,11 @@ symbol: public(String[32])
 decimals: public(uint256)
 totalSupply: public(uint256)
 
-balanceOf: public(HashMap(address, uint256))
-allowances: public(HashMap(address, HashMap[address, uint256]))
+balanceOf: public(HashMap[address, uint256])
+allowances: public(HashMap[address, HashMap[address, uint256]])
 
 @external
-def __init__(_name: String[64], _symbol: String[32], _decimal: uint256, _initialSupply: uint256):
+def __init__(_name: String[64], _symbol: String[32], _decimals: uint256, _initialSupply: uint256):
     self.name = _name
     self.symbol = _symbol
     self.decimals = _decimals
@@ -29,9 +29,9 @@ def transfer(_amount:uint256, _to:address):
     self.balanceOf[_to] += _amount
 
 @external
-def approve(_spender:adddress, _amount):
+def approve(_spender:address, _amount:uint256):
     # assert self.balanceOf[_owner] >= _amount, "insufficient balance"
-    self.allowance[msg.sender][_spender] += _amount
+    self.allowances[msg.sender][_spender] += _amount
     
  
 @external
@@ -39,5 +39,5 @@ def transferFrom(_owner:address, _amount:uint256):
     assert self.allowances[_owner][msg.sender] >= _amount, "insufficient allowance"
     assert self.balanceOf[_owner] >= _amount, "insufficient balance"
     self.balanceOf[_owner] -= _amount
-    self.balanceOf[_to] += _amount
-    self.allowance[_owner][msg.sender] -= _amount
+    self.balanceOf[msg.sender] += _amount
+    self.allowances[_owner][msg.sender] -= _amount
