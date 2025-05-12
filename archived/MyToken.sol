@@ -44,6 +44,7 @@ contract MyToken is ManagedAccess {
         address spender = msg.sender;
 
         require(allowance[from][spender] >= amount, "insufficient allowance");
+        require(balanceOf[from] >= amount, "insufficient balance");
 
         allowance[from][spender] -= amount;
 
