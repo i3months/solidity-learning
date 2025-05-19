@@ -1,7 +1,10 @@
 # @version ^0.3.9
 # @license MIT
 
-
+'''
+모듈화 할 때는 @deploy 데코레이터 사용 
+공식문서랑도 지금 작성한거랑 차이가 좀 있음 
+'''
 interface IMyToken:
     def transfer(_amount: uint256, _to: address): nonpayable
     def transferFrom(_owner: address, _to: address, _amount: uint256): nonpayable
