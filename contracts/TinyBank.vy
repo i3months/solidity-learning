@@ -32,7 +32,7 @@ manager: address
 @external
 def __init__(_stakingToken: IMyToken):
     self.stakingToken = _stakingToken
-    self.rewardPerBlock = self.INIT_REWARD
+    self.rewardPerBlock = INIT_REWARD
     self.owner = msg.sender
     self.manager = msg.sender
 
@@ -53,7 +53,7 @@ def onlyManager(_manager: address):
 def updateReward(_to: address):
     if self.staked[_to] > 0:
         blocks: uint256 = block.number - self.lastClaimedBlock[_to]
-        reward: uint256 = rewardPerBlock * blocks * self.staked[_to] / self.totalStaked
+        reward: uint256 = self.rewardPerBlock * blocks * self.staked[_to] / self.totalStaked
         self.stakingToken.mint(reward, _to)
 
     self.lastClaimedBlock[_to] = block.number
