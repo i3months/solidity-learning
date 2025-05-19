@@ -21,7 +21,7 @@ describe("TinyBank", () => {
         ]);
         tinyBankC = await hre.ethers.deployContract("TinyBank", [
             await myTokenC.getAddress(),
-            managers
+            // managers
         ]);       
         await myTokenC.setManager(tinyBankC.getAddress());
     });
@@ -93,7 +93,7 @@ describe("TinyBank", () => {
         it("Should rever when changing rewardPerBlock by hacker", async () => {
             const hacker = signers[3];
             const rewardToChange = hre.ethers.parseUnits("10000", DECIMALS);
-            await expect(tinyBankC.connect(hacker).setRewardPerBlock(rewardToChange)).to.be.revertedWith("Not all confirmed yet");
+            await expect(tinyBankC.connect(hacker).setRewardPerBlock(rewardToChange)).to.be.revertedWith("You are not authorized");
         })
     });
 });

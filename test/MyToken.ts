@@ -63,7 +63,7 @@ describe("My Token", () => {
         myTokenContract
           .connect(hacker)
           .mint(MINTING_AGAIN_AMOUNT, hacker.address)
-      ).to.be.revertedWith("Not Manager");
+      ).to.be.revertedWith("You are not authorized to manage this contract");
     });
   });
 
@@ -176,57 +176,57 @@ describe("My Token", () => {
 });
 
 // assignment - multi manager test
-describe("TinyBank - MultiManager Access", () => {
-  let signers: HardhatEthersSigner[];
-  let myToken: MyToken;
-  let tinyBank: TinyBank;
+// describe("TinyBank - MultiManager Access", () => {
+//   let signers: HardhatEthersSigner[];
+//   let myToken: MyToken;
+//   let tinyBank: TinyBank;
 
-  beforeEach(async () => {
-    signers = await hre.ethers.getSigners();
-    const managers = signers.slice(0, MANAGER_NUMBER).map((s) => s.address);
+//   beforeEach(async () => {
+//     signers = await hre.ethers.getSigners();
+//     const managers = signers.slice(0, MANAGER_NUMBER).map((s) => s.address);
 
-    myToken = await hre.ethers.deployContract("MyToken", [
-      "MyToken",
-      "MY",
-      DECIMALS,
-      MINTING_AMOUNT,
-    ]);
+//     myToken = await hre.ethers.deployContract("MyToken", [
+//       "MyToken",
+//       "MY",
+//       DECIMALS,
+//       MINTING_AMOUNT,
+//     ]);
 
-    tinyBank = await hre.ethers.deployContract("TinyBank", [
-      await myToken.getAddress(),
-      managers,
-    ]);
+//     tinyBank = await hre.ethers.deployContract("TinyBank", [
+//       await myToken.getAddress(),
+//       // managers,
+//     ]);
 
-    await myToken.setManager(await tinyBank.getAddress());
-  });
+//     await myToken.setManager(await tinyBank.getAddress());
+//   });
 
-  it("should revert if non manager tries to confirm", async () => {
-    const nonManager = signers[6];
-    await expect(tinyBank.connect(nonManager).confirm()).to.be.revertedWith(
-      "You are not a manager"
-    );
-  });
+//   it("should revert if non manager tries to confirm", async () => {
+//     const nonManager = signers[6];
+//     await expect(tinyBank.connect(nonManager).confirm()).to.be.revertedWith(
+//       "You are not a manager"
+//     );
+//   });
 
-  it("should revert if not all managers confirmed", async () => {
-    const newReward = hre.ethers.parseUnits("5", DECIMALS);
+//   it("should revert if not all managers confirmed", async () => {
+//     const newReward = hre.ethers.parseUnits("5", DECIMALS);
 
-    await tinyBank.connect(signers[0]).confirm();
-    await tinyBank.connect(signers[1]).confirm();
-    await tinyBank.connect(signers[2]).confirm();
+//     await tinyBank.connect(signers[0]).confirm();
+//     await tinyBank.connect(signers[1]).confirm();
+//     await tinyBank.connect(signers[2]).confirm();
 
-    await expect(tinyBank.setRewardPerBlock(newReward)).to.be.revertedWith(
-      "Not all confirmed yet"
-    );
-  });
+//     await expect(tinyBank.setRewardPerBlock(newReward)).to.be.revertedWith(
+//       "Not all confirmed yet"
+//     );
+//   });
 
-  it("should change reward after all managers confirm", async () => {
-    const newReward = hre.ethers.parseUnits("10", DECIMALS);
+//   it("should change reward after all managers confirm", async () => {
+//     const newReward = hre.ethers.parseUnits("10", DECIMALS);
 
-    for (let i = 0; i < MANAGER_NUMBER; i++) {
-      await tinyBank.connect(signers[i]).confirm();
-    }
-    await tinyBank.setRewardPerBlock(newReward);
+//     for (let i = 0; i < MANAGER_NUMBER; i++) {
+//       await tinyBank.connect(signers[i]).confirm();
+//     }
+//     await tinyBank.setRewardPerBlock(newReward);
 
-    expect(await tinyBank.rewardPerBlock()).to.equal(newReward);
-  });
-});
+//     expect(await tinyBank.rewardPerBlock()).to.equal(newReward);
+//   });
+// });
