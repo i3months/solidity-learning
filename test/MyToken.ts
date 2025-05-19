@@ -1,5 +1,6 @@
 import hre from "hardhat";
 import { expect } from "chai";
+// vyper 쓸 때는 typechain을 수동으로 만들어 줘야 함
 import { MyToken, TinyBank } from "../typechain-types";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { assertArgumentCount } from "ethers";
@@ -44,10 +45,14 @@ describe("My Token", () => {
 
   // TDD - 테
   describe("Mint", () => {
-    it("should return 1MT balance for signer 0", async () => {
+    it("should return initial supply + 1MT balance for signer 0", async () => {
       const signer0 = signers[0];
+      const oneMt = hre.ethers.parseUnits("1", DECIMALS);
+
+      await myTokenContract.mint(oneMt, signer0.address);
+
       expect(await myTokenContract.balanceOf(signer0)).equals(
-        MINTING_AMOUNT * 10n ** DECIMALS
+        MINTING_AMOUNT * 10n ** DECIMALS + oneMt
       );
     });
 
