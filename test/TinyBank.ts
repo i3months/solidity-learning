@@ -43,7 +43,9 @@ describe("TinyBank", () => {
 
             // 승인 받아야 호출 가능 
             await myTokenC.approve(await tinyBankC.getAddress(), stakingAmount);
-            await tinyBankC.stake(stakingAmount);
+            await expect(tinyBankC.stake(stakingAmount)).to.emit(tinyBankC, "Staked").withArgs(
+                signer0.address, stakingAmount
+            );
             tinyBankC.staked(signer0.address);
 
             expect(await tinyBankC.staked(signer0.address)).equals(stakingAmount);
@@ -60,7 +62,9 @@ describe("TinyBank", () => {
             const stakingAmount = hre.ethers.parseUnits("50", DECIMALS);
             await myTokenC.approve(await tinyBankC.getAddress(), stakingAmount);
             await tinyBankC.stake(stakingAmount);
-            await tinyBankC.withdraw(stakingAmount);
+            await expect(tinyBankC.withdraw(stakingAmount)).to.emit(tinyBankC, "Withdraw").withArgs(
+                stakingAmount, signer0.address
+            );
             expect(await tinyBankC.staked(signer0.address)).equals(0);
         });
     });
