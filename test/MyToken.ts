@@ -63,7 +63,7 @@ describe("My Token", () => {
         myTokenContract
           .connect(hacker)
           .mint(MINTING_AGAIN_AMOUNT, hacker.address)
-      ).to.be.revertedWith("You are not authorized to manage this contract");
+      ).to.be.revertedWith("Not Manager");
     });
   });
 

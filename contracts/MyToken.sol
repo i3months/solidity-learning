@@ -56,7 +56,7 @@ contract MyToken is ManagedAccess {
 
     // 누구나 호출할 수 있어서 위험 
     function mint(uint256 amount, address to) external onlyManager {
-        _mint(amount, owner);
+        _mint(amount, to);
     }
 
     function setManager(address _manager) external onlyOwner {
@@ -66,7 +66,7 @@ contract MyToken is ManagedAccess {
     // 토큰 발행은 mint로
     function _mint(uint256 amount, address to) internal {
         totalSupply += amount;
-        balanceOf[owner] += amount;
+        balanceOf[to] += amount;
 
         emit Transfer(address(0), owner, amount);
     }
