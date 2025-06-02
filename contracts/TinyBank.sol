@@ -7,7 +7,6 @@
 pragma solidity ^0.8.28;
 
 import "./ManagedAccess.sol";
-import "./MultiManagedAccess.sol";
 
 interface IMyToken {
     function transfer(uint256 amount, address to) external;
@@ -18,7 +17,7 @@ interface IMyToken {
 }
 
 // 저장할 token을 먼저 배포, 이후 TinyBank의 생성자로 줘야 함 
-contract TinyBank is MultiManagedAccess {
+contract TinyBank is ManagedAccess {
     event Staked(address from, uint256 amount);
     event WithDraw(uint256 amount, address to);
 
@@ -34,13 +33,13 @@ contract TinyBank is MultiManagedAccess {
     uint256 public totalStaked;
 
     constructor(IMyToken _stakingToken, address[] memory _managers)
-        MultiManagedAccess(msg.sender, _managers) {
+        ManagedAccess(msg.sender, msg.sender) {
         stakingToken = _stakingToken;
         rewardPerBlock = defaultRewardPerBlock;
     }
 
 
-    function setRewardPerBlock(uint256 _amount) external onlyAllConfirmed {
+    function setRewardPerBlock(uint256 _amount) external onlyManager {
         rewardPerBlock = _amount;
     }
 
