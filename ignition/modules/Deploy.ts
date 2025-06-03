@@ -12,12 +12,6 @@ export default buildModule("MyTokenDeploy", (m) => {
     initialAmount,
   ]);
 
-  const managerAccount = m.getAccount(0);
-  const managerList = [managerAccount];
-
-  const tinyBanckContract = m.contract("TinyBank", [
-    myTokenContract,
-    managerList,
-  ]);
+  const tinyBanckContract = m.contract("TinyBank", [myTokenContract]);
   return { myTokenContract, tinyBanckContract };
 });

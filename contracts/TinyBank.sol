@@ -32,7 +32,7 @@ contract TinyBank is ManagedAccess {
     mapping(address => uint256) public staked;
     uint256 public totalStaked;
 
-    constructor(IMyToken _stakingToken, address[] memory _managers)
+    constructor(IMyToken _stakingToken)
         ManagedAccess(msg.sender, msg.sender) {
         stakingToken = _stakingToken;
         rewardPerBlock = defaultRewardPerBlock;
