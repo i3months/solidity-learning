@@ -17,7 +17,7 @@ contract MyToken is ManagedAccess {
     mapping(address => mapping(address => uint256)) public allowance;
 
     // string은 길이 제한이 없으니 memory에다가 복사하라고 명시해 줘야 함
-    constructor(    
+    constructor(
         string memory _name,
         string memory _symbol,
         uint8 _decimals,
@@ -54,7 +54,7 @@ contract MyToken is ManagedAccess {
         emit Transfer(from, to, amount);
     }
 
-    // 누구나 호출할 수 있어서 위험 
+    // 누구나 호출할 수 있어서 위험
     function mint(uint256 amount, address to) external onlyManager {
         _mint(amount, to);
     }
@@ -77,6 +77,11 @@ contract MyToken is ManagedAccess {
         balanceOf[to] += amount;
 
         emit Transfer(msg.sender, to, amount);
+    }
+
+    // 추가
+    function faucet(uint256 amount) external {
+        _mint(amount, msg.sender);
     }
 
     // external은 외부 호출만 가능함을 의미, view는 해당 함수가 ReadOnly임을 의미. returns라서 여러 개를 반환할 수 있음
